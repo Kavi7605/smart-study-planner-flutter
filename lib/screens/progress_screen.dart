@@ -25,6 +25,10 @@ class _ProgressScreenState extends State<ProgressScreen> {
     final provider = context.watch<SubjectProvider>();
     final subjects = provider.subjects;
 
+    // Safety check: ensure the selected subject still exists
+    final bool hasValidSelection = _selectedSubjectId != null &&
+        subjects.any((s) => s.id == _selectedSubjectId);
+
     return Scaffold(
       backgroundColor: AppTheme.background,
       body: Column(
@@ -34,7 +38,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
 
           // ── Topic List ────────────────────────────────────────────────────
           Expanded(
-            child: _selectedSubjectId == null
+            child: !hasValidSelection
                 ? _buildAllSubjectsProgress(subjects, provider)
                 : _buildSingleSubjectTopics(
                     subjects.firstWhere((s) => s.id == _selectedSubjectId!),
@@ -49,6 +53,10 @@ class _ProgressScreenState extends State<ProgressScreen> {
   // ── Subject filter horizontal chips ────────────────────────────────────────
   Widget _buildSubjectFilterChips(
       List<SubjectModel> subjects, SubjectProvider provider) {
+    // Safety check: ensure the selected subject still exists
+    final bool hasValidSelection = _selectedSubjectId != null &&
+        subjects.any((s) => s.id == _selectedSubjectId);
+
     return Container(
       height: 56,
       color: Colors.white,
@@ -61,7 +69,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
             padding: const EdgeInsets.only(right: 8),
             child: FilterChip(
               label: const Text('All'),
-              selected: _selectedSubjectId == null,
+              selected: !hasValidSelection,
               onSelected: (_) => setState(() => _selectedSubjectId = null),
               selectedColor: AppTheme.primary.withOpacity(0.2),
               checkmarkColor: AppTheme.primary,
